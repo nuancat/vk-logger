@@ -1,0 +1,18 @@
+#Приложение вк
+vk:
+  credentials:
+    app-id: 5
+    defend-key: a
+    service-access-key: 3
+
+    #Группа
+    group-id: 2
+    # Ключ кооторый сгенерирован внутри сообщества (не планируется использовать, так как нельзя в админке отследить графики активности)
+    # админка тут https://vk.com/stats?act=api&aid=51853210
+    group-access-token: v
+
+    #Целевой аккаунт куда приходят уведомления
+    #id пользователя
+    vk-user-messages-receiver: 8
+    email: a
+    password: a
