@@ -18,16 +18,19 @@ public class VkLog {
     private final VkCredentials vkCredentials;
     private final VkAutoAuthService vkAutoAuthService;
     private final Random random = new Random();
+    private static GroupActor groupActor;
+
 
     @SneakyThrows
     public String log(String text) {
-        GroupActor groupActor;
-        try {
-            groupActor = vkAutoAuthService.groupActor();
-        } catch (Exception e) {
-            log.error("Не удалось нафармить ключ");
-            log.error("Берем ключ сообщетсва");
-            groupActor = new GroupActor(vkCredentials.getGroupId(), vkCredentials.getGroupAccessToken());
+        if (groupActor == null) {
+            try {
+                groupActor = vkAutoAuthService.groupActor();
+            } catch (Exception e) {
+                log.error("Не удалось нафармить ключ");
+                log.error("Берем ключ сообщетсва");
+                groupActor = new GroupActor(vkCredentials.getGroupId(), vkCredentials.getGroupAccessToken());
+            }
         }
 
         final String response = vkApiClient.messages()

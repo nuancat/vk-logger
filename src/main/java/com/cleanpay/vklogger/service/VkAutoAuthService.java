@@ -6,6 +6,7 @@ import com.vk.api.sdk.client.actors.GroupActor;
 import com.vk.api.sdk.objects.GroupAuthResponse;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class VkAutoAuthService {
 
     private static final String REDIRECT_URL = "https://oauth.vk.com/blank.html";
@@ -23,17 +25,13 @@ public class VkAutoAuthService {
     private static final String GROUP_ACCESS_URL = "https://oauth.vk.com/authorize?client_id=%s&display=page&redirect_uri=" + REDIRECT_URL + "&group_ids=%s&scope=" + SCOPE + "&response_type=code&v=5.131";
     private final VkCredentials vkCredentials;
     private final VkApiClient vkApiClient;
-    private static GroupActor groupActor;
 
     @SneakyThrows
     public GroupActor groupActor() {
-        if (groupActor != null) {
-            return groupActor;
-        }
+
         final String code = browseIt(vkCredentials.getEmail(), vkCredentials.getPassword());
-        assert code != null;
         final GroupAuthResponse execute = vkApiClient.oAuth().groupAuthorizationCodeFlow(vkCredentials.getAppId(), vkCredentials.getDefendKey(), REDIRECT_URL, code).execute();
-        groupActor = new GroupActor(vkCredentials.getGroupId(), execute.getAccessTokens().values().stream().findFirst().get());
+        GroupActor groupActor = new GroupActor(vkCredentials.getGroupId(), execute.getAccessTokens().values().stream().findFirst().get());
         return groupActor;
     }
 
@@ -42,8 +40,9 @@ public class VkAutoAuthService {
                 .withSilent(true)
                 .build();
         String url = GROUP_ACCESS_URL.formatted(vkCredentials.getAppId(), vkCredentials.getGroupId());
-        var driver = new ChromeDriver(chromeDriverService, new ChromeOptions().addArguments("--enable-javascript", "--silent", "--headless")); // (true) включает js// (true) включает js ||| add add "--silent"
+        var driver = new ChromeDriver(chromeDriverService, new ChromeOptions().addArguments("--enable-javascript", "--silent")); // (true) включает js// (true) включает js ||| add add "--silent"
         try {
+            log.info("print url {}", url);
             driver.get(url);
             WebElement loginField = driver.findElement(By.name("email")); // поиск полей для заполнения логина и пароля
             loginField.click(); // фокус на поле логина
