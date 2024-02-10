@@ -29,7 +29,7 @@ class VkLoggerApplicationTests {
 
     @Test
     void checkVkLog() {
-        final String log = vkLog.log(LocalDateTime.now().toString());
+        final var log = vkLog.log(LocalDateTime.now().toString());
         System.out.println(log);
     }
 
@@ -38,11 +38,9 @@ class VkLoggerApplicationTests {
         try {
             throw new Exception();
         } catch (Exception e) {
-            final String log = vkLog.log(e.getStackTrace().toString());
+            final var log = vkLog.log(e.getStackTrace().toString());
             System.out.println(log);
         }
 
     }
-
-
 }

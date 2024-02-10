@@ -17,8 +17,8 @@ class VkLogTest {
 
     @Test
     void checkVkLog() throws InterruptedException {
-        for (int i = 0; i < 100; i++) {
-            final String log = vkLog.log(LocalDateTime.now() + "   " + RandomStringUtils.randomAlphabetic(35));
+        for (int i = 0; i < 10000; i++) {
+            final var log = vkLog.log(LocalDateTime.now() + "   " + RandomStringUtils.randomAlphabetic(35));
             System.out.println(log);
             Thread.sleep(1000);
         }
@@ -30,9 +30,8 @@ class VkLogTest {
         try {
             throw new Exception();
         } catch (Exception e) {
-            final String log = vkLog.log(e.getStackTrace().toString());
+            final var log = vkLog.log(e.getStackTrace().toString());
             System.out.println(log);
         }
-
     }
 }

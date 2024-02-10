@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
@@ -20,7 +19,8 @@ import org.springframework.stereotype.Service;
 public class VkAutoAuthService {
 
     private static final String REDIRECT_URL = "https://oauth.vk.com/blank.html";
-    private static final String GROUP_ACCESS_URL = "https://oauth.vk.com/authorize?client_id=%s&display=page&redirect_uri=" + REDIRECT_URL + "&group_ids=%s&scope=messages&response_type=code&v=5.131";
+    private static final String SCOPE = "397381";
+    private static final String GROUP_ACCESS_URL = "https://oauth.vk.com/authorize?client_id=%s&display=page&redirect_uri=" + REDIRECT_URL + "&group_ids=%s&scope=" + SCOPE + "&response_type=code&v=5.131";
     private final VkCredentials vkCredentials;
     private final VkApiClient vkApiClient;
     private static GroupActor groupActor;
@@ -38,12 +38,12 @@ public class VkAutoAuthService {
     }
 
     private String browseIt(String login, String pass) { // magic
+        var chromeDriverService = new ChromeDriverService.Builder()
+                .withSilent(true)
+                .build();
+        String url = GROUP_ACCESS_URL.formatted(vkCredentials.getAppId(), vkCredentials.getGroupId());
+        var driver = new ChromeDriver(chromeDriverService, new ChromeOptions().addArguments("--enable-javascript", "--silent", "--headless")); // (true) включает js// (true) включает js ||| add add "--silent"
         try {
-            var chromeDriverService = new ChromeDriverService.Builder()
-                    .withSilent(true)
-                    .build();
-            String url = GROUP_ACCESS_URL.formatted(vkCredentials.getAppId(), vkCredentials.getGroupId());
-            WebDriver driver = new ChromeDriver(chromeDriverService, new ChromeOptions().addArguments("--enable-javascript", "--silent", "--headless")); // (true) включает js// (true) включает js ||| add add "--silent"
             driver.get(url);
             WebElement loginField = driver.findElement(By.name("email")); // поиск полей для заполнения логина и пароля
             loginField.click(); // фокус на поле логина
@@ -65,6 +65,7 @@ public class VkAutoAuthService {
             return token;
         } catch (NoSuchElementException ex) {
             System.out.println("Косяк в авторизации проблемный аккаунт -- " + login + " : пароль: " + pass);
+            driver.quit();
         }
         return null;
     }
