@@ -21,12 +21,19 @@ public class VkLog {
 
     @SneakyThrows
     public String log(String text) {
-        final GroupActor groupActor = vkAutoAuthService.groupActor();
+        GroupActor groupActor;
+        try {
+            groupActor = vkAutoAuthService.groupActor();
+        } catch (Exception e) {
+            log.error("Не удалось нафармить ключ");
+            log.error("Берем ключ сообщетсва");
+            groupActor = new GroupActor(vkCredentials.getGroupId(), vkCredentials.getGroupAccessToken());
+        }
 
         final String response = vkApiClient.messages()
                 .sendUserIds(groupActor)
                 .message(text)
-//                .randomId(random.nextInt(random.nextInt(Integer.MAX_VALUE)))
+                .randomId(random.nextInt(random.nextInt(Integer.MAX_VALUE)))
                 .userId(vkCredentials.getVkUserMessagesReceiver())
                 .executeAsString();
         if (!response.startsWith("{\"response\"")) {
