@@ -5,11 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.List;
+
 @ConfigurationProperties("vk.credentials")
 @Data
 public class VkCredentials {
     @NotBlank
-    String groupAccessToken;
+    List<String> groupAccessToken;
     @NotBlank
     Integer appId;
     @NotNull

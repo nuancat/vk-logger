@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Random;
 
 @RequiredArgsConstructor
@@ -18,34 +19,36 @@ public class VkLog {
     private final VkCredentials vkCredentials;
     private final VkAutoAuthService vkAutoAuthService;
     private final Random random = new Random();
-    private static GroupActor groupActor;
-
 
     @SneakyThrows
     public String log(String text) {
-        if (groupActor == null) {
-            try {
-                groupActor = vkAutoAuthService.groupActor();
-            } catch (Exception e) {
-                log.error("Не удалось нафармить ключ");
-                log.error("Берем ключ сообщетсва");
-                groupActor = new GroupActor(vkCredentials.getGroupId(), vkCredentials.getGroupAccessToken());
-            }
-        }
-
+        GroupActor groupActor = new GroupActor(vkCredentials.getGroupId(), getRandomAccessToken());
         final String response = vkApiClient.messages()
                 .sendUserIds(groupActor)
                 .message(text)
-                .randomId(random.nextInt(random.nextInt(Integer.MAX_VALUE)))
+                .randomId(random.nextInt(Integer.MAX_VALUE))
                 .userId(vkCredentials.getVkUserMessagesReceiver())
                 .executeAsString();
         if (!response.startsWith("{\"response\"")) {
             log.error("Error parse send message");
             log.error(response);
-            final GroupActor reservedActor = new GroupActor(vkCredentials.getGroupId(), vkCredentials.getGroupAccessToken());
+            final GroupActor reservedActor = new GroupActor(vkCredentials.getGroupId(), getRandomAccessToken());
             vkApiClient.messages().sendUserIds(reservedActor).message(response).userId(vkCredentials.getVkUserMessagesReceiver()).execute();
         }
         return response;
+    }
+
+    public void heat() {
+        try {
+            vkAutoAuthService.groupActor();
+        } catch (Exception e) {
+            log.error("Не удалось нафармить ключ");
+        }
+    }
+
+    private String getRandomAccessToken() {
+        final List<String> keys = vkCredentials.getGroupAccessToken();
+        return keys.get(random.nextInt(keys.size()));
     }
 
 }

@@ -20,7 +20,7 @@ class VkLogTest {
         for (int i = 0; i < 10000; i++) {
             final var log = vkLog.log(LocalDateTime.now() + "   " + RandomStringUtils.randomAlphabetic(3900));
             System.out.println(log);
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         }
 
     }

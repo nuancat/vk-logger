@@ -23,8 +23,7 @@ class VkLoggerApplicationTests {
     @Test
     void checkVkCredentials() {
         Assertions.assertThat(vkCredentials.getGroupAccessToken())
-                .isPrintable()
-                .isNotBlank();
+                .isNotEmpty();
     }
 
     @Test
