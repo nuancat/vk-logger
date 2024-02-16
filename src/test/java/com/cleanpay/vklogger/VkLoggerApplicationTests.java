@@ -2,6 +2,8 @@ package com.cleanpay.vklogger;
 
 import com.cleanpay.vklogger.configuration.VkCredentials;
 import com.cleanpay.vklogger.service.VkLog;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,17 +29,17 @@ class VkLoggerApplicationTests {
     }
 
     @Test
-    void checkVkLog() {
-        final var log = vkLog.log(LocalDateTime.now().toString());
+    void checkVkLog() throws ClientException, ApiException {
+        final var log = vkLog.sendMessage(LocalDateTime.now().toString());
         System.out.println(log);
     }
 
     @Test
-    void checkVkLog_throwException() {
+    void checkVkLog_throwException() throws ClientException, ApiException {
         try {
             throw new Exception();
         } catch (Exception e) {
-            final var log = vkLog.log(e.getStackTrace().toString());
+            final var log = vkLog.sendMessage(e.getStackTrace().toString());
             System.out.println(log);
         }
 

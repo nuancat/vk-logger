@@ -13,6 +13,8 @@ public class VkCredentials {
     @NotBlank
     List<String> groupAccessToken;
     @NotBlank
+    List<String> userAccessToken;
+    @NotBlank
     Integer appId;
     @NotNull
     Long groupId;
