@@ -61,14 +61,14 @@ public class VkLog {
         return response;
     }
 
-    public String sendPost() throws ClientException, ApiException, IOException, InterruptedException {
+    public String sendPost(String text) throws ClientException, ApiException, IOException, InterruptedException {
         final URI uploadLink = vkApiClient.docs()
                 .getWallUploadServer(userActor).
                 groupId(224698200L)
                 .execute()
                 .getUploadUrl();
 
-        final byte[] bytes = "binary code".getBytes();
+        final byte[] bytes = text.getBytes();
         final MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.LEGACY);
         builder.addBinaryBody("file", bytes, ContentType.DEFAULT_BINARY, "log%s.txt".formatted(LocalDateTime.now()));
@@ -76,8 +76,7 @@ public class VkLog {
         final HttpPost httpPost = new HttpPost(uploadLink);
         httpPost.setEntity(entity);
 
-        try (CloseableHttpClient client = HttpClientBuilder.create()
-                .build()) {
+        try (CloseableHttpClient client = HttpClientBuilder.create().build()) {
 
             final SaveResponse file1 = client.execute(httpPost, response -> {
                 final String next = new Scanner(response.getEntity().getContent()).next();
@@ -87,9 +86,7 @@ public class VkLog {
                 final SaveResponse execute;
                 try {
                     execute = vkApiClient.docs().save(userActor).file(file).execute();
-                } catch (ApiException e) {
-                    throw new RuntimeException(e);
-                } catch (ClientException e) {
+                } catch (ApiException | ClientException e) {
                     throw new RuntimeException(e);
                 }
                 log.info(execute.toPrettyString());
