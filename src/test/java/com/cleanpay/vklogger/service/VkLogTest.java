@@ -28,7 +28,7 @@ class VkLogTest {
 
     @Test
     void sendPost() throws InterruptedException, ClientException, ApiException, IOException {
-        System.out.println(vkLog.sendPost());
+        System.out.println(vkLog.sendPost(LocalDateTime.now() + "   " + RandomStringUtils.randomAlphabetic(4000)));
     }
 
 
