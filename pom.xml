@@ -9,9 +9,9 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.cleanpay</groupId>
-    <artifactId>vk-logger</artifactId>
-    <version>0.0.1</version>
-    <name>vk-logger</name>
+    <artifactId>vk-adapter</artifactId>
+    <version>0.0.2</version>
+    <name>vk-adapter</name>
     <description>Demo project for Spring Boot</description>
     <properties>
         <java.version>17</java.version>
